@@ -18,6 +18,8 @@
 // const auth = getAuth(app);
 // const googleProvider = new GoogleAuthProvider();
 
+
+
 const firebaseConfig = {
   apiKey: "AIzaSyDNqPyu-TDSiLWTNY-54DiwEq6zKuPGnwQ",
   authDomain: "trash-detector-58bb6.firebaseapp.com",
