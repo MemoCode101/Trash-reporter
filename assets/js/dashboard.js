@@ -1,65 +1,60 @@
-// // 🔥 Replace with your Firebase Config
-// const firebaseConfig = {
-//     apiKey: "YOUR_API_KEY",
-//     authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-//     projectId: "YOUR_PROJECT_ID",
-//     storageBucket: "YOUR_PROJECT_ID.appspot.com",
-//     messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-//     appId: "YOUR_APP_ID"
-// };
-// firebase.initializeApp(firebaseConfig);
-// const auth = firebase.auth();
+document.addEventListener("DOMContentLoaded", async () => {
+    // ✅ Ensure Firebase is initialized
+    if (!firebase.apps.length) {
+        console.error("Firebase is not initialized. Check firebase-config.js.");
+        return;
+    }
 
-// 📌 Show user info
-auth.onAuthStateChanged(user => {
-    if (user) {
-                document.getElementById("userEmail").innerText = user.email;
-        
-                // If user logged in via Google, show profile picture
-                if (user.photoURL) {
-                    document.getElementById("userPhoto").src = user.photoURL;
-                    document.getElementById("userPhoto").style.display = "block";
-                }
-            } else {
-                // Redirect to login page if user is not signed in
-                window.location.href = "login.html";
-            }
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const tableBody = document.getElementById("reportTableBody");
+
+    // 📌 Fetch Reports from Firestore
+    async function fetchReports() {
+        tableBody.innerHTML = ""; // Clear previous data
+
+        try {
+            const querySnapshot = await db.collection("reports").orderBy("timestamp", "desc").get();
+
+            querySnapshot.forEach((doc) => {
+                const report = doc.data();
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${report.block}</td>
+                    <td>${report.floor}</td>
+                    <td>${report.area}</td>
+                    <td>${report.additionalDetails || "None"}</td>
+                    <td>${report.status}</td>
+                    <td>
+                        <button class="btn btn-success btn-sm" onclick="updateStatus('${doc.id}', 'Cleaned')">Mark Cleaned</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteReport('${doc.id}')">Delete</button>
+                    </td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error("Error fetching reports:", error);
+        }
+    }
+
+    // 📌 Update Report Status
+    window.updateStatus = async (reportId, newStatus) => {
+        await db.collection("reports").doc(reportId).update({ status: newStatus });
+        alert("Status updated!");
+        fetchReports(); // Refresh the table
+    };
+
+    // 📌 Delete Report
+    window.deleteReport = async (reportId) => {
+        if (confirm("Are you sure you want to delete this report?")) {
+            await db.collection("reports").doc(reportId).delete();
+            alert("Report deleted!");
+            fetchReports(); // Refresh the table
+        }
+    };
+
+    // 📌 Fetch Reports When Page Loads
+    fetchReports();
 });
-
-// 📌 Logout function
-function logout() {
-    auth.signOut().then(() => {
-        alert("Logged Out!");
-        window.location.href = "login.html";
-    });
-}
-// 🔥 Replace with your Firebase Config
-// const firebaseConfig = {
-//     apiKey: "YOUR_API_KEY",
-//     authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-//     projectId: "YOUR_PROJECT_ID",
-//     storageBucket: "YOUR_PROJECT_ID.appspot.com",
-//     messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-//     appId: "YOUR_APP_ID"
-// };
-// firebase.initializeApp(firebaseConfig);
-// const auth = firebase.auth();
-
-// // 📌 Show user info
-// auth.onAuthStateChanged(user => {
-//     if (user) {
-//         document.getElementById("userEmail").innerText = user.email;
-
-//         // If user logged in via Google, show profile picture
-//         if (user.photoURL) {
-//             document.getElementById("userPhoto").src = user.photoURL;
-//             document.getElementById("userPhoto").style.display = "block";
-//         }
-//     } else {
-//         // Redirect to login page if user is not signed in
-//         window.location.href = "index.html";
-//     }
-// });
-
-// 📌 Logout function
-

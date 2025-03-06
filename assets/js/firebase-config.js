@@ -20,6 +20,9 @@
 
 
 
+
+
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDNqPyu-TDSiLWTNY-54DiwEq6zKuPGnwQ",
   authDomain: "trash-detector-58bb6.firebaseapp.com",
@@ -31,5 +34,6 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
