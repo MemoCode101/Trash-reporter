@@ -23,7 +23,7 @@
 
 
 // Firebase configuration
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyDNqPyu-TDSiLWTNY-54DiwEq6zKuPGnwQ",
   authDomain: "trash-detector-58bb6.firebaseapp.com",
   projectId: "trash-detector-58bb6",

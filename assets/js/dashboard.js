@@ -39,6 +39,29 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    // 📌 Fetch Reports and Show on Dashboard
+    async function fetchReports() {
+        const tableBody = document.getElementById("reportTableBody");
+        tableBody.innerHTML = ""; // Clear table
+
+        const querySnapshot = await db.collection("reports").orderBy("timestamp", "desc").get();
+
+        querySnapshot.forEach((doc) => {
+            const report = doc.data();
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td><img src="${report.imageUrl}" width="100"></td>
+                <td>Lat: ${report.latitude}, Lon: ${report.longitude}</td>
+                <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteReport('${doc.id}')">Delete</button>
+                </td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+    }
+
     // 📌 Update Report Status
     window.updateStatus = async (reportId, newStatus) => {
         await db.collection("reports").doc(reportId).update({ status: newStatus });
